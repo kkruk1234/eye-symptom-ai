@@ -24,18 +24,19 @@ def process():
 @app.route("/process", methods=['POST'])
 def process():
     transcription = request.form.get("TranscriptionText", "")
+    print("Twilio transcription received:", transcription)
     transcription_lower = transcription.lower()
     r = VoiceResponse()
 
-    # Emergency keywords
+    # Emergency keywords (multi-word phrases added)
     emergency_keywords = [
         "pain", "severe", "sudden", "vision loss",
         "can't see", "cannot see", "flashes", "floaters",
-        "curtain", "trauma", "injury"
+        "curtain falling", "curtain over eye", "trauma", "injury"
     ]
 
     # Check emergency first
-    if any(word in transcription_lower for word in emergency_keywords):
+    if any(keyword in transcription_lower for keyword in emergency_keywords):
         r.say(
             "This could be an eye emergency. Sudden vision changes, pain, flashes, "
             "or a curtain falling over your vision require immediate in-person evaluation. "
