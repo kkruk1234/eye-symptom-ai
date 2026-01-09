@@ -25,12 +25,12 @@ def process():
 def process():
     transcription = request.form.get("TranscriptionText", "")
 
-# Fallback for testing
-if not transcription:
-    transcription = request.values.get("SpeechResult", "")
+    # Fallback for testing
+    if not transcription:
+        transcription = request.values.get("SpeechResult", "")
 
-print("Twilio transcription received:", transcription)
-transcription_lower = transcription.lower()
+    print("Twilio transcription received:", transcription)
+    transcription_lower = transcription.lower()
     r = VoiceResponse()
 
     # Emergency keywords (multi-word phrases added)
