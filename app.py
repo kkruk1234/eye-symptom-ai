@@ -24,8 +24,13 @@ def process():
 @app.route("/process", methods=['POST'])
 def process():
     transcription = request.form.get("TranscriptionText", "")
-    print("Twilio transcription received:", transcription)
-    transcription_lower = transcription.lower()
+
+# Fallback for testing
+if not transcription:
+    transcription = request.values.get("SpeechResult", "")
+
+print("Twilio transcription received:", transcription)
+transcription_lower = transcription.lower()
     r = VoiceResponse()
 
     # Emergency keywords (multi-word phrases added)
