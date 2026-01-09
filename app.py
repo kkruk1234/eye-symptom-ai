@@ -21,19 +21,18 @@ def voice():
 
 @app.route("/process", methods=['POST'])
 def process():
-@app.route("/process", methods=['POST'])
-def process():
+    # Get transcription from Twilio
     transcription = request.form.get("TranscriptionText", "")
-
-    # Fallback for testing
+    
+    # Fallback if TranscriptionText is empty
     if not transcription:
         transcription = request.values.get("SpeechResult", "")
 
-    print("Twilio transcription received:", transcription)
     transcription_lower = transcription.lower()
+
     r = VoiceResponse()
 
-    # Emergency keywords (multi-word phrases added)
+    # Emergency keywords (multi-word phrases included)
     emergency_keywords = [
         "pain", "severe", "sudden", "vision loss",
         "can't see", "cannot see", "flashes", "floaters",
@@ -89,7 +88,7 @@ def process():
         )
         return Response(str(r), mimetype='text/xml')
 
-    # Fallback
+    # Fallback if nothing matches
     r.say(
         "Your symptoms do not clearly match a specific category. If symptoms persist, "
         "change, or worsen, an eye care professional can provide individualized evaluation."
