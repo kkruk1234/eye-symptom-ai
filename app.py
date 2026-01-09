@@ -9,7 +9,7 @@ def voice():
     r = VoiceResponse()
     r.say(
         "Hello. I can provide general information about non-emergency eye symptoms. "
-        "I cannot help with eye pain or sudden vision changes. Please ask your question after the beep."
+        "I cannot help with eye pain or sudden vision changes. Please ask your question."
     )
     # Use Gather with speech input for live transcription
     r.gather(
