@@ -3,6 +3,7 @@ from twilio.twiml.voice_response import VoiceResponse
 
 app = Flask(__name__)
 
+# This route handles the initial call
 @app.route("/voice", methods=['POST'])
 def voice():
     r = VoiceResponse()
@@ -10,26 +11,21 @@ def voice():
         "Hello. I can provide general information about non-emergency eye symptoms. "
         "I cannot help with eye pain or sudden vision changes. Please ask your question after the beep."
     )
-    r.record(
-        action="/process",
-        max_length=20,
-        transcribe=True,
-        play_beep=True
+    # Use Gather with speech input for live transcription
+    r.gather(
+        input='speech',
+        action='/process',
+        speechTimeout='auto',
+        timeout=5
     )
     return Response(str(r), mimetype='text/xml')
 
 
+# This route processes the user's speech
 @app.route("/process", methods=['POST'])
 def process():
-    # Get transcription from Twilio
-    transcription = request.form.get("TranscriptionText", "")
-    
-    # Fallback if TranscriptionText is empty
-    if not transcription:
-        transcription = request.values.get("SpeechResult", "")
-
-    transcription_lower = transcription.lower()
-
+    transcription = request.values.get("SpeechResult", "")
+    transcription_lower = transcription.lower() if transcription else ""
     r = VoiceResponse()
 
     # Emergency keywords (multi-word phrases included)
@@ -39,7 +35,6 @@ def process():
         "curtain falling", "curtain over eye", "trauma", "injury"
     ]
 
-    # Check emergency first
     if any(keyword in transcription_lower for keyword in emergency_keywords):
         r.say(
             "This could be an eye emergency. Sudden vision changes, pain, flashes, "
@@ -94,3 +89,8 @@ def process():
         "change, or worsen, an eye care professional can provide individualized evaluation."
     )
     return Response(str(r), mimetype='text/xml')
+
+
+# Required for running on Render
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
